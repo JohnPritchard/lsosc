@@ -1,0 +1,11 @@
+To compile...
+1) Run ./configure
+2) edit config.cache to set:
+   ac_cv_header_libskycalc_h=${ac_cv_header_libskycalc_h=yes}
+&
+   ac_cv_lib_skycalc_main=${ac_cv_lib_skycalc_main=yes}
+3) then run ./configure
+4) Then make
+
+J.D.Pritchard
+2003-03-17

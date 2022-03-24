@@ -1,0 +1,21 @@
+To compile...
+
+export CC=gcc-mp-8
+export CXX=g++-mp-8
+export CFLAGS="-I /usr/local/astro/eb/src/libskycalc/include"
+export CXXFLAGS="-I/usr/local/astro/eb/src/libskycalc/include"
+export CPPFLAGS="-I/usr/local/astro/eb/src/libskycalc/include"
+export LDFLAGS="-L/opt/local/lib"
+make realclean
+./configure --skycalc_dir=/usr/local
+make all
+sudo make install
+
+J.D.Pritchard
+2019-04-23
+================================================================================
+Installation
+============
+
+./configure
+make clean all install

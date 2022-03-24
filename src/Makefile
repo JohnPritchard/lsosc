@@ -1,0 +1,140 @@
+## "@(#) $Id: Makefile.in,v 1.20 2015/06/09 14:23:23 jpritcha Exp $"
+# Makefile for lsosc
+
+#  Copyright (C) 2000  J.D.Pritchard
+
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+CC = gcc-mp-8
+CFLAGS = -I /usr/local/astro/eb/src/libskycalc/include
+#### For Linux
+#CFLAGS = -O -Wall -Wno-unused
+#### For HPUX
+#CFLAGS = -Ae -O -Wall
+
+## yes
+
+RANLIB = ranlib
+INSTALL = /opt/local/bin/ginstall -c
+STRIP = strip
+LN = ln
+LNOPTS = -sfv
+RM = rm
+RMOPTS = -fv
+
+prefix = /usr/local
+exec_prefix = ${prefix}
+bindir = $(exec_prefix)/bin
+libdir = ${exec_prefix}/lib
+includedir = ${prefix}/include
+infodir = ${prefix}/info
+
+BINS       = lsosc
+LINKS      = dk154sc eso152sc 2p2sc 3p6sc nttsc ut1sc ut2sc ut3sc ut4sc
+BIND       = ../bin
+
+LDKD       = ..
+LDKINC     = -I $(LDKD)/include
+LDKLIB     = $(LDKD)/lib
+LDKLIBA    = $(LDKLIB)/liblsosc.a
+
+#INCLUDE    = $(LDKINC) -I ../../libskycalc/include
+INCLUDE    = $(LDKINC)
+#LIBS       = -L$(LDKLIB) -llsosc -L../../libskycalc/lib -lskycalc -L/usr/local/lib -lskycalc -lm 
+LIBS       = -L$(LDKLIB) -llsosc -L/usr/local/lib -lskycalc -lm 
+
+SUBDIRS =
+
+ifeq ($(HOST),w1d5tcs)
+ all:	$(BIND)/tcsdk154sc
+  INCLUDE    = $(LDKINC) -I../../libskycalc/include
+  LIBS       = -L$(LDKLIB) -llsosc -L../../libskycalc/lib -lskycalc -lm
+  RMOPTS = -f
+else
+ all:	$(BINS)
+endif
+
+install: $(BINS)
+	 $(INSTALL) -m 0755 $(BINS) $(bindir)
+	 set -e ; for i in $(LINKS) ; do \
+	   $(LN) -fsv lsosc $(bindir)/$$i ;\
+	 done
+
+.PHONY: clean dep
+
+clean:
+
+realclean:
+	$(RM) $(RMOPTS) $(BIND)/lsosc \
+	                $(BIND)/dk154sc \
+			$(BIND)/eso152sc \
+			$(BIND)/2p2sc \
+			$(BIND)/3p6sc \
+			$(BIND)/nttsc \
+			$(BIND)/ut1sc \
+			$(BIND)/ut2sc \
+			$(BIND)/ut3sc \
+			$(BIND)/ut4sc \
+	                $(BIND)/tcsdk154sc
+	$(RM) $(RMOPTS) Makefile
+
+distclean:
+
+lsosc:	lsosc.c $(LDKLIBA)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o lsosc lsosc.c $(LIBS) $(INCLUDE)
+
+$(BIND)/dk154sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/dk154sc
+
+$(BIND)/eso152sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/eso152sc
+
+$(BIND)/2p2sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/2p2sc
+
+$(BIND)/nttsc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/nttsc
+
+$(BIND)/3p6sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/3p6sc
+
+$(BIND)/ut1sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/ut1sc
+
+$(BIND)/ut2sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/ut2sc
+
+$(BIND)/ut3sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/ut3sc
+
+$(BIND)/ut4sc:	$(BIND)/lsosc
+	$(LN) $(LNOPTS) lsosc $(BIND)/ut4sc
+
+$(BIND)/tcsdk154sc:	tcsdk154sc.c $(LDKLIBA)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BIND)/tcsdk154sc tcsdk154sc.c $(LIBS) $(INCLUDE)
+
+$(LDKLIBA)		:
+	  cd ../libsrc ;\
+	  $(MAKE) all ;\
+
+
+## Suffixes ##
+.c.o:
+	$(CC) -c $(INCLUDE) $(CFLAGS) $(GGDB) $(PG) $<
+
+dep:
+	gcc -MM -MG ${INCLUDE} *.cc > .depend
+
+-include .depend
