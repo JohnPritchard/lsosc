@@ -87,7 +87,7 @@ realclean:
 			$(BIND)/ut2sc \
 			$(BIND)/ut3sc \
 			$(BIND)/ut4sc \
-	                $(BIND)/tcsdk154sc
+	        $(BIND)/tcsdk154sc
 	$(RM) $(RMOPTS) Makefile
 
 distclean:
